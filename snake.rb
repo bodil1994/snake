@@ -49,7 +49,6 @@ class Snake
 
   # snake moves by deleting first element in array and adding new head
   def move
-
     @positions.shift unless @growing
     @growing = false
 
@@ -63,7 +62,10 @@ class Snake
     when 'right'
       @positions.push(magic_wall_coords(head[0] + 1, head[1]))
     end
+  end
 
+  def hit_itself?
+    @positions.uniq.length != @positions.length
   end
 
   # ensure snake appears on other side of window
@@ -94,6 +96,7 @@ class Snake
     head[1]
   end
 end
+
 snake = Snake.new
 
 class Game
@@ -102,6 +105,7 @@ class Game
     @paused = false
     @food_x = food_coord[0]
     @food_y = food_coord[1]
+    @finished = false
   end
 
   def food_coord
@@ -118,8 +122,11 @@ class Game
     empty_coords.sample
   end
 
-  def draw_food
-    Square.new(x: @food_x * GRID_SIZE, y: @food_y * GRID_SIZE, size: GRID_SIZE - 1, color: 'red')
+  def draw
+    unless finished?
+      Square.new(x: @food_x * GRID_SIZE, y: @food_y * GRID_SIZE, size: GRID_SIZE - 1, color: 'red')
+    end
+    Text.new(text_message, color: 'white', x: 10, y: 10, size: 25)
   end
 
   def food_eaten?
@@ -129,6 +136,22 @@ class Game
   def new_food
     @food_x = food_coord[0]
     @food_y = food_coord[1]
+  end
+
+  def text_message
+
+  end
+
+  def finished?
+    @finished
+  end
+
+  def new_game
+    @finish = false
+  end
+
+  def finish
+    @finish = true
   end
 
   def pause
@@ -153,16 +176,20 @@ game = Game.new(snake)
 
 update do
   clear
-  unless game.paused?
-    snake.move
 
-    if game.food_eaten?
-      game.new_food
-      snake.growing = true
-    end
+  unless game.paused? && game.finished?
+    snake.move
   end
+
+  if game.food_eaten?
+    game.new_food
+    snake.growing = true
+  end
+
   snake.draw
   game.draw_food
+
+  game.finish if snake.hit_itself?
 end
 
 on :key_down do |event|
