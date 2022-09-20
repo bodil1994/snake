@@ -38,7 +38,7 @@ class Snake
   def initialize
     @positions = [[2, 2], [2, 3], [2, 4], [2, 5]]
     @direction = 'down'
-    @grow = false
+    @growing = false
   end
 
   def draw
@@ -54,7 +54,7 @@ class Snake
     @growing = false
 
     case @direction
-    when 'up'p
+    when 'up'
       @positions.push(magic_wall_coords(head[0], head[1] - 1))
     when 'down'
       @positions.push(magic_wall_coords(head[0], head[1] + 1))
@@ -64,7 +64,6 @@ class Snake
       @positions.push(magic_wall_coords(head[0] + 1, head[1]))
     end
 
-
   end
 
   # ensure snake appears on other side of window
@@ -72,6 +71,15 @@ class Snake
     # e.g. x stays same until larger than width, with = 32, x = 34 (left window) -> x = 2; x in window x=6, 6/32 = 0, leaved 6 --> x stay 6
    [x % GRID_WIDTH, y % GRID_HEIGHT]
 
+  end
+
+  def can_change_direction?(new_direction)
+    case @direction
+    when 'up' then new_direction != 'down'
+    when 'down' then new_direction != 'up'
+    when 'left' then new_direction != 'right'
+    when 'right' then new_direction != 'left'
+    end
   end
 
   def head
@@ -150,7 +158,7 @@ update do
 
     if game.food_eaten?
       game.new_food
-      # grow snake
+      snake.growing = true
     end
   end
   snake.draw
@@ -158,16 +166,11 @@ update do
 end
 
 on :key_down do |event|
-  case event.key
-  when 'up'
-    snake.direction = 'up'
-  when 'down'
-    snake.direction = 'down'
-  when 'right'
-    snake.direction = 'right'
-  when 'left'
-    snake.direction = 'left'
-  when 'p'
+  if ['up', 'down', 'left', 'right'].include?(event.key)
+    if snake.can_change_direction?(event.key) && !game.paused?
+        snake.direction = event.key
+    end
+  elsif event.key == 'p'
     game.paused? ? game.unpause : game.pause
   end
 end
