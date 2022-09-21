@@ -97,15 +97,16 @@ class Snake
   end
 end
 
-snake = Snake.new
-
 class Game
+  attr_reader :score
+
   def initialize(snake)
     @snake = snake
     @paused = false
     @food_x = food_coord[0]
     @food_y = food_coord[1]
     @finished = false
+    @score = 0
   end
 
   def food_coord
@@ -136,22 +137,23 @@ class Game
   def new_food
     @food_x = food_coord[0]
     @food_y = food_coord[1]
+    @score += 1
   end
 
   def text_message
-
+    if finished?
+      "Game over, you scored #{@score} points. Press s to start a new game."
+    elsif paused?
+      "Game paused, your current score is #{@score} points. Press p to continue"
+    end
   end
 
   def finished?
     @finished
   end
 
-  def new_game
-    @finish = false
-  end
-
   def finish
-    @finish = true
+    @finished = true
   end
 
   def pause
@@ -167,17 +169,19 @@ class Game
   end
 end
 
+snake = Snake.new
 game = Game.new(snake)
 
 # Move Snake V1
   # Snake box size of grid space, not moving
   # Press arrow key moves in that direction every frame until another arrow key is pressed then direction changes to that
 
-
 update do
   clear
 
-  unless game.paused? && game.finished?
+  game.finish if snake.hit_itself?
+
+  unless game.paused? || game.finished?
     snake.move
   end
 
@@ -187,9 +191,7 @@ update do
   end
 
   snake.draw
-  game.draw_food
-
-  game.finish if snake.hit_itself?
+  game.draw
 end
 
 on :key_down do |event|
@@ -199,6 +201,9 @@ on :key_down do |event|
     end
   elsif event.key == 'p'
     game.paused? ? game.unpause : game.pause
+  elsif event.key == 's'
+    snake = Snake.new
+    game = Game.new(snake)
   end
 end
 
