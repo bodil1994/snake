@@ -2,7 +2,7 @@ require 'ruby2d'
 # Documentation https://www.ruby2d.com/
 # Resource  https://dev.to/joaocardoso193/i-made-a-simple-snake-game-with-ruby-2d-4on4 ; https://www.youtube.com/watch?v=hLvlHCnv_k8&list=PLWcnu8hOlT9VlS_VjNQ6fviGI2z8Vgrm_&ab_channel=MarioVisic
 # The Ruby 2D Package allows you to export it to iOS using ruby2d build --ios <your_game_file_name.rb>. It also allows you to export to a Javascript and HTML package to be deployed on the web using ruby2d build --web <your_game_file_name.rb>. However, the web feature is currently disabled as it's being upgraded.
-
+# build --> ruby2d build --native snake.rb
 set background: 'navy', fps_cap: 5, title: "Snake", diagnostics: true
 
 GRID_SIZE = 20 #grid size is 20 pixels
@@ -11,26 +11,6 @@ GRID_SIZE = 20 #grid size is 20 pixels
 GRID_WIDTH = Window.width / GRID_SIZE # how many columns
 GRID_HEIGHT = Window.height / GRID_SIZE # how many rows
 
-
-# Move Snake
-
-  # Move Snake V2
-  # when snake hits wall comes out the other side
-
-  # Move Snake V3
-  # Dies when it hits itself
-
-  # Move Snake V4
-  # gets a bit faster everytime it hits food
-
-
-# Snake Food MVP
-  # box in random place in different colour appears
-  # disappear when snake hits
-  # appear in new random place
-
-# Initialize a Snake
-# Create array of positions to draw squares in
 class Snake
   attr_writer :direction, :growing
   attr_reader :positions
@@ -127,7 +107,7 @@ class Game
     unless finished?
       Square.new(x: @food_x * GRID_SIZE, y: @food_y * GRID_SIZE, size: GRID_SIZE - 1, color: 'red')
     end
-    Text.new(text_message, color: 'white', x: 10, y: 10, size: 25)
+    Text.new(text_message, color: 'white', x: 10, y: 10, size: 16)
   end
 
   def food_eaten?
@@ -144,7 +124,7 @@ class Game
     if finished?
       "Game over, you scored #{@score} points. Press s to start a new game."
     elsif paused?
-      "Game paused, your current score is #{@score} points. Press p to continue"
+      "Game paused, your current score is #{@score} points. Press p to continue."
     end
   end
 
@@ -171,10 +151,6 @@ end
 
 snake = Snake.new
 game = Game.new(snake)
-
-# Move Snake V1
-  # Snake box size of grid space, not moving
-  # Press arrow key moves in that direction every frame until another arrow key is pressed then direction changes to that
 
 update do
   clear
