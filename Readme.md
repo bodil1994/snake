@@ -3,7 +3,7 @@
 # Snake
 A classic snake arcade game for made with the [Ruby 2D gem](https://github.com/ruby2d/ruby2d). Chase the apples and grow as big as you can but try not to get tangled up in your own tail!
 
- <p align="left"><img width="300" src="https://i.postimg.cc/y6ZzDKr8/snake-ui.png"></p>
+ <p align="center"><img width="500" src="https://i.postimg.cc/y6ZzDKr8/snake-ui.png"></p>
 
 ## How to play
 
